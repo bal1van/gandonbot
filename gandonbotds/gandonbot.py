@@ -200,6 +200,15 @@ async def handle_gandon_command(message: types.Message):
     await get_gandon(message, period_type)
 
 
+def declension_of_times(count):
+    if count % 10 == 1 and count % 100 != 11:
+        return 'раз'
+    elif count % 10 in [2, 3, 4] and not (count % 100 in [12, 13, 14]):
+        return 'раза'
+    else:
+        return 'раз'
+
+
 @dp.message_handler(commands=['month_gandons'])
 async def month_gandons(message: types.Message):
     chat_id = message.chat.id
@@ -225,10 +234,11 @@ async def month_gandons(message: types.Message):
     position = 1
     for count in sorted(grouped_users.keys(), reverse=True):
         users = grouped_users[count]
+        times = declension_of_times(count)
         if count == max_count:
-            result += f"{position}. " + ', '.join([f"@{user}" for user in users]) + f" ({count} раз) 👑\n"
+            result += f"{position}. " + ', '.join([f"@{user}" for user in users]) + f" ({count} {times}) 👑\n"
         else:
-            result += f"{position}. " + ', '.join([f"@{user}" for user in users]) + f" ({count} раз)\n"
+            result += f"{position}. " + ', '.join([f"@{user}" for user in users]) + f" ({count} {times})\n"
         position += 1
     await message.answer(result)
 
